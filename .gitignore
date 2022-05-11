@@ -1,0 +1,9 @@
+**.env
+!**/example.env
+database-docker/.env
+wordpress-docker/.env
+
+database-docker/mysql/**
+!database-docker/mysql/.keep
+wordpress-docker/wordpress/**
+!wordpress-docker/wordpress/.keep

@@ -1,0 +1,29 @@
+version: '3.9'
+services:
+
+  wordpress:
+    image: wordpress:${WORDPRESS_VERSION:-latest}
+    container_name: ${COMPOSE_PROJECT_NAME:?"Please give one unique container name"}
+    volumes:
+      - ./config/php.conf.ini:/usr/local/etc/php/conf.d/php.ini
+      - ${WORDPRESS_DATA_DIR:?"Please give one unique data directory."}:/var/www/html
+    environment:
+      - WORDPRESS_DB_NAME=${COMPOSE_PROJECT_NAME:-wordpress}
+      - WORDPRESS_TABLE_PREFIX=${WORDPRESS_TABLE_PREFIX:?"We are using a single database, so we need a unique prefix for all wordpresses"}
+      - WORDPRESS_DB_HOST=${WORDPRESS_DB_HOST:?"Give the docker database name"}
+      - WORDPRESS_DB_USER=${DATABASE_USER:-root}
+      - WORDPRESS_DB_PASSWORD=${DATABASE_PASSWORD:?"Give database password"}
+    external_links:
+      - ${WORDPRESS_DB_HOST}
+      - phpmyadmin
+    restart: always
+    ports:
+      - ${WORDPRESS_CUSTOM_HTTP_PORT:?"Please give HTTP port"}:80 # Expose http and https
+      - ${WORDPRESS_CUSTOM_HTTPS_PORT:?"Please give HTTPS port"}:443
+    networks:
+      - wordpress_database_default
+      - default
+
+networks:
+  wordpress_database_default:
+    external: true
